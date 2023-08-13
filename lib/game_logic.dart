@@ -24,8 +24,6 @@ class Game {
       while (inserteds.contains(value)){
         value = Random().nextInt(4);
       }
-
-      print(value);
       var matches = 0;
       for (var j = 0; j < cards.length; j++){
         if (valueCards[value] == cards[j]) {
