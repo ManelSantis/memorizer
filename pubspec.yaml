@@ -75,6 +75,12 @@ flutter:
         - asset: fonts/LexendMega-Regular.ttf
         - asset: fonts/LexendMega-Thin.ttf
         - asset: fonts/LexendMega-SemiBold.ttf
+    - family: K2D
+      fonts:
+        - asset: fonts/K2D-Bold.ttf
+        - asset: fonts/K2D-Medium.ttf
+        - asset: fonts/K2D-Regular.ttf
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
