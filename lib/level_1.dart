@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import 'game_logic.dart';
+
 class Level1 extends StatefulWidget {
   const Level1({super.key});
 
@@ -12,17 +14,22 @@ class Level1 extends StatefulWidget {
 }
 
 class _Level1State extends State<Level1> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  Timer? countdownTimer;
+  Duration myDuration = Duration(seconds: 60);
+  Game _game = Game();
+  int score = 0;
+  List<String> open = [];
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance
         .addPostFrameCallback((_) => startTimer());
-    //startTimer();
+    _game.initGame();
   }
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  Timer? countdownTimer;
-  Duration myDuration = Duration(seconds: 60);
   @override
   Widget build(BuildContext context) {
 
@@ -122,7 +129,7 @@ class _Level1State extends State<Level1> {
                     left: 217,
                     top: 0,
                     child: Text(
-                      'Score:10',
+                      'Score:$score',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.white,
@@ -135,24 +142,6 @@ class _Level1State extends State<Level1> {
                 ],
               ),
             ),
-            const Text(
-              "Memorizer",
-              style: TextStyle(
-                fontSize: 32,
-                fontFamily: 'Lexend Mega',
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            const Text(
-              "Level 1",
-              style: TextStyle(
-                fontSize: 32,
-                fontFamily: 'Lexend Mega',
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
             ElevatedButton(
               onPressed: startTimer,
               child: Text(
@@ -162,6 +151,60 @@ class _Level1State extends State<Level1> {
                 ),
               ),
             ),
+            SizedBox(
+              height: 20.0,
+            ),
+            SizedBox(
+                height: MediaQuery.of(context).size.width,
+                width: MediaQuery.of(context).size.width,
+                child: GridView.builder(
+                    itemCount: _game.cards!.length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 4,
+                      crossAxisSpacing: 10.0,
+                      mainAxisSpacing: 10.0,
+                    ),
+                    padding: EdgeInsets.all(10.0),
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            if (!open.contains(_game.gameImg![index])) {
+                              _game.gameImg![index] = _game.cards[index];
+                              _game.matchCheck.add({index: _game.cards[index]});
+                            }
+                          });
+                          if (_game.matchCheck.length == 2) {
+                            if (_game.matchCheck[0].values.first ==
+                                _game.matchCheck[1].values.first) {
+                              open.add(_game.matchCheck[0].values.first);
+                              score += 100;
+                              _game.matchCheck.clear();
+                            } else {
+
+                              Future.delayed(Duration(milliseconds: 500), () {
+                                setState(() {
+                                  _game.gameImg![_game.matchCheck[0].keys.first] = _game.hiddenCard;
+                                  _game.gameImg![_game.matchCheck[1].keys.first] = _game.hiddenCard;
+                                  _game.matchCheck.clear();
+                                });
+                              });
+                            }
+                          }
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(10.0),
+                          decoration: BoxDecoration(
+                            color: Color(0xFF6F399A),
+                            borderRadius: BorderRadius.circular(8.0),
+                            image: DecorationImage(
+                              image: AssetImage(_game.gameImg![index]),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      );
+                    })),
           ],
         ),
       ),
