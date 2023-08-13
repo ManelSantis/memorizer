@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
               "MEMORIZER",
               style: TextStyle(
                 fontSize: 32,
-                fontFamily: 'Lexend Mega',
+                fontFamily: 'LexendMega',
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
@@ -59,13 +59,14 @@ class _HomePageState extends State<HomePage> {
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(50.0),
-                      //side: const BorderSide(color: Color(0xFFAD00FF))
-                    ))),
+                      side: const BorderSide(color: Color(0xFFAD00FF))
+                    )),
+                ),
                 child: const Text('NEW GAME',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,
-                      fontFamily: 'Lexend Mega',
+                      fontFamily: 'LexendMega',
                       fontWeight: FontWeight.w500,
                     )),
               ),
@@ -90,7 +91,7 @@ class _HomePageState extends State<HomePage> {
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,
-                      fontFamily: 'Lexend Mega',
+                      fontFamily: 'LexendMega',
                       fontWeight: FontWeight.w500,
                     )),
               ),
