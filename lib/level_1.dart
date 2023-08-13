@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -10,10 +12,29 @@ class Level1 extends StatefulWidget {
 }
 
 class _Level1State extends State<Level1> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => startTimer());
+    //startTimer();
+  }
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  Timer? countdownTimer;
+  Duration myDuration = Duration(seconds: 60);
   @override
   Widget build(BuildContext context) {
+
+    //Timer
+    String strDigits(int n) => n.toString().padLeft(2, '0');
+    final days = strDigits(myDuration.inDays);
+    // Step 7
+    final hours = strDigits(myDuration.inHours.remainder(24));
+    final minutes = strDigits(myDuration.inMinutes.remainder(60));
+    final seconds = strDigits(myDuration.inSeconds.remainder(60));
+
+
     return Scaffold(
       backgroundColor: const Color(0xFF433C57),
       appBar: AppBar(
@@ -43,20 +64,23 @@ class _Level1State extends State<Level1> {
         elevation: 10,
         hoverElevation: 50,
         backgroundColor: const Color(0xFF41F393),
-        onPressed: () => {},
+        onPressed: () {
+          resetTimer(60);
+          startTimer();
+        },
         tooltip: 'Start Again',
         child: const Icon(FontAwesomeIcons.arrowRotateLeft),
       ),
       body: Form(
         key: _formKey,
-        child:  Column(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              width: 323,
+             // width: 323,
               height: 73,
-              child: const Stack(
+              child:  Stack(
                 children: [
                   Positioned(
                     left: 87,
@@ -65,7 +89,7 @@ class _Level1State extends State<Level1> {
                       width: 145,
                       height: 39,
                       child: Text(
-                        '120 s',
+                        '${int.parse(minutes) > 0 ? "$minutes:" : ''}$seconds ${myDuration.inSeconds<=60? "s": ''} ',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Colors.white,
@@ -94,11 +118,11 @@ class _Level1State extends State<Level1> {
                       ),
                     ),
                   ),
-                   Positioned(
+                  Positioned(
                     left: 217,
                     top: 0,
                     child: Text(
-                      'Score:100',
+                      'Score:10',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.white,
@@ -129,9 +153,50 @@ class _Level1State extends State<Level1> {
                 color: Colors.white,
               ),
             ),
+            ElevatedButton(
+              onPressed: startTimer,
+              child: Text(
+                'Start',
+                style: TextStyle(
+                  fontSize: 30,
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
+  //==============
+  //countdown code
+  //==============
+
+  /// Timer related methods ///
+  // Step 3
+  void startTimer() {
+    countdownTimer =
+        Timer.periodic(Duration(seconds: 1), (_) => setCountDown());
+  }
+  // Step 4
+  void stopTimer() {
+    setState(() => countdownTimer!.cancel());
+  }
+  // Step 5
+  void resetTimer(int time) {
+    stopTimer();
+    setState(() => myDuration = Duration(seconds: time));
+  }
+  // Step 6
+  void setCountDown() {
+    final reduceSecondsBy = 1;
+    setState(() {
+      final seconds = myDuration.inSeconds - reduceSecondsBy;
+      if (seconds < 0) {
+        countdownTimer!.cancel();
+      } else {
+        myDuration = Duration(seconds: seconds);
+      }
+    });
+  }
+
 }
