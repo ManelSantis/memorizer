@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:memorizer/about.dart';
 import 'package:memorizer/level_1.dart';
 
 class HomePage extends StatefulWidget {
@@ -26,6 +27,13 @@ class _HomePageState extends State<HomePage> {
               FontAwesomeIcons.brain,
               color: Colors.white,
               size: 100.0,
+              shadows: <Shadow>[
+                Shadow(
+                  offset: Offset(0.0, 5.0),
+                  blurRadius: 15.0,
+                  color: Color.fromARGB(255, 0, 0, 0),
+                ),
+              ],
             ),
             const Text(
               "MEMORIZER",
@@ -34,6 +42,18 @@ class _HomePageState extends State<HomePage> {
                 fontFamily: 'LexendMega',
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
+                shadows: <Shadow>[
+                  Shadow(
+                    offset: Offset(0.0, 5.0),
+                    blurRadius: 15.0,
+                    color: Color.fromARGB(255, 0, 0, 0),
+                  ),
+                  /*Shadow(
+                    offset: Offset(10.0, 10.0),
+                    blurRadius: 8.0,
+                    color: Color.fromARGB(125, 0, 0, 255),
+                  ),*/
+                ],
               ),
             ),
             const SizedBox(
@@ -54,13 +74,12 @@ class _HomePageState extends State<HomePage> {
                   }
                 },
                 style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        const Color(0xFF6F399A)),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50.0),
-                      side: const BorderSide(color: Color(0xFFAD00FF))
-                    )),
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(const Color(0xFF6F399A)),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50.0),
+                          side: const BorderSide(color: Color(0xFFAD00FF)))),
                 ),
                 child: const Text('NEW GAME',
                     style: TextStyle(
@@ -76,8 +95,14 @@ class _HomePageState extends State<HomePage> {
               width: 200,
               height: 48,
               child: OutlinedButton(
-                onPressed: () {
-                  // Respond to button press
+                onPressed: () async {
+                  late Widget page = const About();
+                  String retorno = "";
+                  try {
+                    retorno = await push(context, page);
+                  } catch (error) {
+                    print(retorno);
+                  }
                 },
                 style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(
