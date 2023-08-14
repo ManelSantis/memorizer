@@ -25,14 +25,12 @@ class _Level1State extends State<Level1> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => startTimer());
+    WidgetsBinding.instance.addPostFrameCallback((_) => startTimer());
     _game.initGame();
   }
 
   @override
   Widget build(BuildContext context) {
-
     //Timer
     String strDigits(int n) => n.toString().padLeft(2, '0');
     final days = strDigits(myDuration.inDays);
@@ -40,7 +38,6 @@ class _Level1State extends State<Level1> {
     final hours = strDigits(myDuration.inHours.remainder(24));
     final minutes = strDigits(myDuration.inMinutes.remainder(60));
     final seconds = strDigits(myDuration.inSeconds.remainder(60));
-
 
     return Scaffold(
       backgroundColor: const Color(0xFF433C57),
@@ -84,36 +81,17 @@ class _Level1State extends State<Level1> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-             // width: 323,
-              height: 73,
-              child:  Stack(
-                children: [
-                  Positioned(
-                    left: 87,
-                    top: 34,
-                    child: SizedBox(
-                      width: 145,
-                      height: 39,
-                      child: Text(
-                        '${int.parse(minutes) > 0 ? "$minutes:" : ''}$seconds ${myDuration.inSeconds<=60? "s": ''} ',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontFamily: 'K2D',
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    left: 0,
-                    top: 3,
-                    child: SizedBox(
-                      width: 56,
-                      height: 25,
-                      child: Text(
+            FractionallySizedBox(
+              widthFactor: 1,
+              child: Container(
+                // width: 323,
+                height: 73,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
                         'Lvl: 1',
                         textAlign: TextAlign.center,
                         style: TextStyle(
@@ -123,26 +101,37 @@ class _Level1State extends State<Level1> {
                           fontWeight: FontWeight.w400,
                         ),
                       ),
-                    ),
-                  ),
-                  Positioned(
-                    left: 217,
-                    top: 0,
-                    child: Text(
-                      'Score:$score',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontFamily: 'K2D',
-                        fontWeight: FontWeight.w400,
+                      Column(
+                        children: [
+                          const SizedBox(height: 18),
+                          Text(
+                            '${int.parse(minutes) > 0 ? "$minutes:" : ''}$seconds${myDuration.inSeconds <= 60 ? "" : ''} ',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 30,
+                              fontFamily: 'K2D',
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
+                      Text(
+                        'Score:$score',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontFamily: 'K2D',
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
-            ElevatedButton(
+            /*ElevatedButton(
               onPressed: startTimer,
               child: Text(
                 'Start',
@@ -150,8 +139,8 @@ class _Level1State extends State<Level1> {
                   fontSize: 30,
                 ),
               ),
-            ),
-            SizedBox(
+            ),*/
+           const  SizedBox(
               height: 20.0,
             ),
             SizedBox(
@@ -181,11 +170,12 @@ class _Level1State extends State<Level1> {
                               score += 100;
                               _game.matchCheck.clear();
                             } else {
-
                               Future.delayed(Duration(milliseconds: 500), () {
                                 setState(() {
-                                  _game.gameImg![_game.matchCheck[0].keys.first] = _game.hiddenCard;
-                                  _game.gameImg![_game.matchCheck[1].keys.first] = _game.hiddenCard;
+                                  _game.gameImg![_game.matchCheck[0].keys
+                                      .first] = _game.hiddenCard;
+                                  _game.gameImg![_game.matchCheck[1].keys
+                                      .first] = _game.hiddenCard;
                                   _game.matchCheck.clear();
                                 });
                               });
@@ -210,6 +200,7 @@ class _Level1State extends State<Level1> {
       ),
     );
   }
+
   //==============
   //countdown code
   //==============
@@ -220,15 +211,18 @@ class _Level1State extends State<Level1> {
     countdownTimer =
         Timer.periodic(Duration(seconds: 1), (_) => setCountDown());
   }
+
   // Step 4
   void stopTimer() {
     setState(() => countdownTimer!.cancel());
   }
+
   // Step 5
   void resetTimer(int time) {
     stopTimer();
     setState(() => myDuration = Duration(seconds: time));
   }
+
   // Step 6
   void setCountDown() {
     final reduceSecondsBy = 1;
@@ -241,5 +235,4 @@ class _Level1State extends State<Level1> {
       }
     });
   }
-
 }
