@@ -24,6 +24,7 @@ class _Level1State extends State<Level1> {
   Game _game = Game();
   int score = 0;
   List<String> open = [];
+  int opened = 0;
 
   @override
   void initState() {
@@ -175,7 +176,6 @@ class _Level1State extends State<Level1> {
                             if (!open.contains(_game.gameImg![index]) && (_game.matchCheck.length < 2)) {
                               _game.gameImg![index] = _game.cards[index];
                               _game.matchCheck.add({index: _game.cards[index]});
-                              open.add(_game.gameImg![index]);
                             }
                           });
                           if (_game.matchCheck.length == 2) {
@@ -184,9 +184,19 @@ class _Level1State extends State<Level1> {
                               open.add(_game.matchCheck[0].values.first);
                               score += 100;
                               _game.matchCheck.clear();
-                              open.clear();
+                              opened += 2;
+                              if (opened == 16) {
+                                _handleBestScore();
+                                opened = 0;
+                                Future.delayed(Duration(milliseconds: 500), ()
+                                {
+                                  resetTimer(60);
+                                  startTimer();
+                                  _game.resetGame();
+                                });
+                              }
                             } else {
-                              Future.delayed(Duration(milliseconds: 350), () {
+                              Future.delayed(Duration(milliseconds: 250), () {
                                 setState(() {
                                   _game.gameImg![_game.matchCheck[0].keys
                                       .first] = _game.hiddenCard;
@@ -194,7 +204,6 @@ class _Level1State extends State<Level1> {
                                       .first] = _game.hiddenCard;
                                   _game.matchCheck.clear();
                                 });
-                                open.clear();
                               });
                             }
                           }

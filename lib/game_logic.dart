@@ -44,4 +44,11 @@ class Game {
     }
    gameImg = List.generate(cardCount, (index) => hiddenCard);
   }
+
+  void resetGame() {
+    cards.clear();
+    inserteds.clear();
+    initGame();
+  }
 }
+
