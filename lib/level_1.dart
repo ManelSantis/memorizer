@@ -199,7 +199,7 @@ class _Level1State extends State<Level1> {
                             borderRadius: BorderRadius.circular(8.0),
                             image: DecorationImage(
                               image: AssetImage(_game.gameImg![index]),
-                              fit: BoxFit.cover,
+                              //fit: BoxFit.cover,
                             ),
                           ),
                         ),
