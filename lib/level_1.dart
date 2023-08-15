@@ -165,9 +165,10 @@ class _Level1State extends State<Level1> {
                       return GestureDetector(
                         onTap: () {
                           setState(() {
-                            if (!open.contains(_game.gameImg![index])) {
+                            if (!open.contains(_game.gameImg![index]) && (_game.matchCheck.length < 2)) {
                               _game.gameImg![index] = _game.cards[index];
                               _game.matchCheck.add({index: _game.cards[index]});
+                              open.add(_game.gameImg![index]);
                             }
                           });
                           if (_game.matchCheck.length == 2) {
@@ -176,8 +177,9 @@ class _Level1State extends State<Level1> {
                               open.add(_game.matchCheck[0].values.first);
                               score += 100;
                               _game.matchCheck.clear();
+                              open.clear();
                             } else {
-                              Future.delayed(Duration(milliseconds: 500), () {
+                              Future.delayed(Duration(milliseconds: 350), () {
                                 setState(() {
                                   _game.gameImg![_game.matchCheck[0].keys
                                       .first] = _game.hiddenCard;
@@ -185,6 +187,7 @@ class _Level1State extends State<Level1> {
                                       .first] = _game.hiddenCard;
                                   _game.matchCheck.clear();
                                 });
+                                open.clear();
                               });
                             }
                           }

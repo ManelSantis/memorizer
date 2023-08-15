@@ -9,20 +9,24 @@ class Game {
     "assets/cloud.png",
     "assets/star.png",
     "assets/square.png",
+    "assets/hole.png",
+    "assets/light.png",
+    "assets/moon.png",
+    "assets/paint.png",
   ];
 
   List<String> cards = [];
   List<int> inserteds = [];
 
-  final int cardCount = 8;
+  final int cardCount = 16;
   List<Map<int, String>> matchCheck = [];
 
   //methods
   void initGame() {
-    for (var i = 0; i < 8; i++) {
-      var value = Random().nextInt(4);
+    for (var i = 0; i < cardCount; i++) {
+      var value = Random().nextInt(8);
       while (inserteds.contains(value)){
-        value = Random().nextInt(4);
+        value = Random().nextInt(8);
       }
       var matches = 0;
       for (var j = 0; j < cards.length; j++){
