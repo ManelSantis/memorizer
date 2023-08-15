@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:memorizer/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'game_logic.dart';
@@ -19,9 +20,11 @@ class _Level1State extends State<Level1> {
 
   int _best = 0;
 
+  int time =60;
+
   Timer? countdownTimer;
-  Duration myDuration = Duration(seconds: 60);
-  Game _game = Game();
+  Duration myDuration =  const Duration(seconds: 60);
+  final Game _game = Game();
   int score = 0;
   List<String> open = [];
   int opened = 0;
@@ -83,7 +86,8 @@ class _Level1State extends State<Level1> {
         hoverElevation: 50,
         backgroundColor: const Color(0xFF41F393),
         onPressed: () {
-          resetTimer(60);
+          time =  time - 5;
+          resetTimer(time);
           startTimer();
         },
         tooltip: 'Start Again',
@@ -105,12 +109,12 @@ class _Level1State extends State<Level1> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
-                        'Lvl: 1',
+                      Text(
+                        'Best: $_best',
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 24,
+                          fontSize: 18,
                           fontFamily: 'K2D',
                           fontWeight: FontWeight.w400,
                         ),
@@ -140,7 +144,6 @@ class _Level1State extends State<Level1> {
                           fontWeight: FontWeight.w400,
                         ),
                       ),
-                      Text("best: $_best"),
                     ],
                   ),
                 ),
@@ -163,7 +166,7 @@ class _Level1State extends State<Level1> {
                 width: MediaQuery.of(context).size.width,
                 child: GridView.builder(
                     itemCount: _game.cards!.length,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 4,
                       crossAxisSpacing: 10.0,
                       mainAxisSpacing: 10.0,
@@ -173,7 +176,8 @@ class _Level1State extends State<Level1> {
                       return GestureDetector(
                         onTap: () {
                           setState(() {
-                            if (!open.contains(_game.gameImg![index]) && (_game.matchCheck.length < 2)) {
+                            if (!open.contains(_game.gameImg![index]) &&
+                                (_game.matchCheck.length < 2)) {
                               _game.gameImg![index] = _game.cards[index];
                               _game.matchCheck.add({index: _game.cards[index]});
                             }
@@ -188,9 +192,10 @@ class _Level1State extends State<Level1> {
                               if (opened == 16) {
                                 _handleBestScore();
                                 opened = 0;
-                                Future.delayed(Duration(milliseconds: 500), ()
-                                {
-                                  resetTimer(60);
+                                Future.delayed(Duration(milliseconds: 500), () {
+                                  //resetTimer(60);
+                                  time =  time - 5;
+                                  resetTimer(time);
                                   startTimer();
                                   _game.resetGame();
                                 });
@@ -251,10 +256,11 @@ class _Level1State extends State<Level1> {
 
   // Step 6
   void setCountDown() {
-    final reduceSecondsBy = 1;
+    const reduceSecondsBy = 1;
     setState(() {
       final seconds = myDuration.inSeconds - reduceSecondsBy;
       if (seconds < 0) {
+        _showDialog(context,score);
         countdownTimer!.cancel();
       } else {
         myDuration = Duration(seconds: seconds);
@@ -279,6 +285,115 @@ class _Level1State extends State<Level1> {
       setState(() {
         _best = score;
       });
+    }
+  }
+
+  _showDialog(BuildContext context,int finalScore) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return WillPopScope(
+          onWillPop: () async => false,
+          child: Dialog.fullscreen(
+            backgroundColor: const Color(0xFF433C57),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "$finalScore",
+                    style: const TextStyle(
+                      fontSize: 32,
+                      fontFamily: 'LexendMega',
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      shadows: <Shadow>[
+                        Shadow(
+                          offset: Offset(0.0, 5.0),
+                          blurRadius: 15.0,
+                          color: Color.fromARGB(255, 0, 0, 0),
+                        ),
+                        /*Shadow(
+                    offset: Offset(10.0, 10.0),
+                    blurRadius: 8.0,
+                    color: Color.fromARGB(125, 0, 0, 255),
+                  ),*/
+                      ],
+                    ),
+                  ),
+                  TextButton(
+                    child: const Text("Try Again",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontFamily: 'LexendMega',
+                          fontWeight: FontWeight.w500,
+                        )),
+                    onPressed: () {
+                      print("Restart!!!");
+                      _game.resetGame();
+                      resetTimer(60);
+                      startTimer();
+                      Navigator.pop(context); // Fechar Dialog
+                    },
+                  ),
+                  SizedBox(
+                    width: 100,
+                    height: 24,
+                    child: OutlinedButton(
+                      onPressed: () async {
+                        late Widget page = const HomePage();
+                        String retorno = "";
+                        try {
+                          retorno = await push(context, page);
+                        } catch (error) {
+                          print(retorno);
+                        }
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            const Color(0xFF6F399A)),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(50.0),
+                                    side: const BorderSide(
+                                        color: Color(0xFFAD00FF)))),
+                      ),
+                      child: const Text('Home',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontFamily: 'LexendMega',
+                            fontWeight: FontWeight.w500,
+                          )),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future push(BuildContext context, Widget page, {bool flagBack = true}) {
+    if (flagBack) {
+      // Pode voltar, ou seja, a página é adicionada na pilha.
+      return Navigator.push(context,
+          MaterialPageRoute(builder: (BuildContext context) {
+        return page;
+      }));
+    } else {
+      // Não pode voltar, ou seja, a página nova substitui a página atual.
+      return Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (BuildContext context) {
+        return page;
+      }));
     }
   }
 }
