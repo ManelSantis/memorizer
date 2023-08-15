@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'game_logic.dart';
 
@@ -16,6 +17,8 @@ class Level1 extends StatefulWidget {
 class _Level1State extends State<Level1> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  int _best = 0;
+
   Timer? countdownTimer;
   Duration myDuration = Duration(seconds: 60);
   Game _game = Game();
@@ -27,15 +30,18 @@ class _Level1State extends State<Level1> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => startTimer());
     _game.initGame();
+    _getBestScore();
   }
+
   @override
-  void dispose(){
+  void dispose() {
     //...
     countdownTimer!.cancel();
     super.dispose();
 
     //...
   }
+
   @override
   Widget build(BuildContext context) {
     //Timer
@@ -133,6 +139,7 @@ class _Level1State extends State<Level1> {
                           fontWeight: FontWeight.w400,
                         ),
                       ),
+                      Text("best: $_best"),
                     ],
                   ),
                 ),
@@ -147,7 +154,7 @@ class _Level1State extends State<Level1> {
                 ),
               ),
             ),*/
-           const  SizedBox(
+            const SizedBox(
               height: 20.0,
             ),
             SizedBox(
@@ -241,5 +248,25 @@ class _Level1State extends State<Level1> {
         myDuration = Duration(seconds: seconds);
       }
     });
+  }
+
+  void _getBestScore() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    _best = (prefs.getInt('best') ?? 0);
+    await prefs.setInt('best', _best);
+    setState(() {
+      _best;
+    });
+  }
+
+  void _handleBestScore() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int temp = (prefs.getInt('best') ?? 0);
+    if (score > _best) {
+      await prefs.setInt('best', score);
+      setState(() {
+        _best = score;
+      });
+    }
   }
 }
