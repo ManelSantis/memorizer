@@ -23,7 +23,7 @@ class _Level1State extends State<Level1> {
   int time =60;
 
   Timer? countdownTimer;
-  Duration myDuration =  const Duration(seconds: 60);
+  Duration myDuration =  const Duration(seconds: 5);
   final Game _game = Game();
   int score = 0;
   List<String> open = [];
@@ -86,8 +86,13 @@ class _Level1State extends State<Level1> {
         hoverElevation: 50,
         backgroundColor: const Color(0xFF41F393),
         onPressed: () {
-          time =  time - 5;
-          resetTimer(time);
+
+          //time =  time - 5;
+          _game.resetGame();
+          setState(() {
+            score = 0;
+          });
+          resetTimer(60);
           startTimer();
         },
         tooltip: 'Start Again',
@@ -336,6 +341,9 @@ class _Level1State extends State<Level1> {
                       print("Restart!!!");
                       _game.resetGame();
                       resetTimer(60);
+                      setState(() {
+                        score = 0;
+                      });
                       startTimer();
                       Navigator.pop(context); // Fechar Dialog
                     },
